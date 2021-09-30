@@ -8,13 +8,13 @@
 import Foundation
 
 class MenuController {
-    let baseURL = URL(string: "http://localhost8080/")!
+    let baseURL = URL(string: "http://localhost:8080/categories")!
     
     //Get request for the categories
     func fetchCategories(completion: @escaping (Result<[String], Error>) -> Void) {
-        let categoriesURL = baseURL.appendingPathComponent("categories")
-        
-        let task = URLSession.shared.dataTask(with: categoriesURL) {
+//        let categoriesURL = baseURL.appendingPathComponent("categories")
+//        print(categoriesURL)
+        let task = URLSession.shared.dataTask(with: baseURL) {
             (data, response, error) in
             if let data = data {
                 do {
