@@ -8,23 +8,27 @@
 import Foundation
 
 class MenuController {
-    let baseURL = URL(string: "http://localhost:8080/categories")!
+    let baseURL = URL(string: "http://localhost:8080/")!
     
     //Get request for the categories
     func fetchCategories(completion: @escaping (Result<[String], Error>) -> Void) {
-//        let categoriesURL = baseURL.appendingPathComponent("categories")
-//        print(categoriesURL)
-        let task = URLSession.shared.dataTask(with: baseURL) {
+        
+        let categoriesStringURL = "\(baseURL)categories"
+        let categoriesURL = URL(string: categoriesStringURL)!
+        let task = URLSession.shared.dataTask(with: categoriesURL) {
             (data, response, error) in
             if let data = data {
+                print("this is the data \(data)")
                 do {
                     let jsonDecoder = JSONDecoder()
                     let categoriesResponse = try jsonDecoder.decode(CategoriesResponse.self, from: data)
                     completion(.success(categoriesResponse.categories))
                 } catch {
+//                    print("it is this at which is running")
                     completion(.failure(error))
                 }
             } else if let error = error {
+    
                 completion(.failure(error))
             }
             
@@ -37,24 +41,29 @@ class MenuController {
     func fetchMenuItems(forCategory categoryName: String,
                         completion: @escaping (Result<[MenuItem], Error>) -> Void) {
         
-        let baseMenuURL = baseURL.appendingPathComponent("menu")
-        var components = URLComponents(url: baseMenuURL, resolvingAgainstBaseURL: true)!
-        components.queryItems = [URLQueryItem(name: "category", value: categoryName)]
-        print(components)
-        let menuURL = components.url!
-        print(menuURL)
-        //remember to print the url to have a look at it to see if you can see the same things in the browser
-        let task = URLSession.shared.dataTask(with: menuURL) {
+        let fetchMenuItemsString = "\(baseURL)menu?category=\(categoryName)"
+        let fetchMenuItemsURL = URL(string: fetchMenuItemsString)!
+//        var components = URLComponents(url: fetchMenyItemsURL, resolvingAgainstBaseURL: true)!
+//        components.queryItems = [URLQueryItem(name: "category", value: categoryName)]
+        print(fetchMenuItemsURL)
+        let task = URLSession.shared.dataTask(with: fetchMenuItemsURL) {
             (data, response, error) in
             if let data = data {
+                print(data)
                 do {
+                    print("we got data")
                     let jsonDecoder = JSONDecoder()
+                    print("we got data 2")
                     let menuResponse = try jsonDecoder.decode(MenuResponse.self, from: data)
+                    print("we got data 3")
                     completion(.success(menuResponse.items))
+                    print("we got data 4")
                 } catch {
+                    print("error for data not being possible to decode")
                     completion(.failure(error))
                 }
             } else if let error = error {
+                print("the error for not getting any data")
                 completion(.failure(error))
             }
         }

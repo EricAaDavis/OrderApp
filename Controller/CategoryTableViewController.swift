@@ -68,7 +68,7 @@ class CategoryTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Category", for: indexPath)
         
         // Configure the cell...
-        cell.textLabel?.text = categories[indexPath.row]
+        configureCell(cell, forCategoryAt: indexPath)
         return cell
     }
     
@@ -76,6 +76,7 @@ class CategoryTableViewController: UITableViewController {
         let category = categories[indexPath.row]
         cell.textLabel?.text = category.capitalized
     }
+    
 
     /*
     // Override to support conditional editing of the table view.
@@ -122,4 +123,13 @@ class CategoryTableViewController: UITableViewController {
     }
     */
 
+}
+extension String {
+    func capitalizingFirstLetter() -> String {
+        return prefix(1).capitalized + dropFirst()
+    }
+
+    mutating func capitalizeFirstLetter() {
+        self = self.capitalizingFirstLetter()
+    }
 }

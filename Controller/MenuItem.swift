@@ -10,18 +10,39 @@ import Foundation
 struct MenuItem: Codable {
     var id: Int
     var name: String
-    var detailText: String
+    var description: String
     var price: Double
     var category: String
-    var imageURL: URL
+    var image_url: URL
     
     enum codingKeys: String, CodingKey {
         case id
         case name
-        case detailText = "description"
+        case desciption
         case price
         case category
-        case imageURL = "image_url"
+        case image_url
     }
     
 }
+
+/*
+struct MenuItem: Codable {
+    var id: Int
+    var name: String
+    var description: String
+    var price: Double
+    var category: String
+    var image_url: URL
+    
+    enum codingKeys: String, CodingKey {
+        case id
+        case name
+        case description
+        case price
+        case category
+        case image_url
+    }
+    
+}
+*/
