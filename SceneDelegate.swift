@@ -9,6 +9,19 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
+    //refrence to the tab bat item i want to update
+    var orderTabBarItem: UITabBarItem!
+    
+    //Method to update the items badge
+    @objc func updateOrderbadge() {
+        switch MenuController.shared.order.menuItems.count {
+        case 0:
+            orderTabBarItem.badgeValue = nil
+        case let count:
+            orderTabBarItem.badgeValue = String(count)
+        }
+    }
+    
     var window: UIWindow?
 
 
@@ -17,6 +30,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        
+        //Set the property when the app first aunches and observe the orderUpdateNotification as in OrderTableViewController
+        NotificationCenter.default.addObserver(self, selector: #selector(updateOrderbadge), name: MenuController.orderUpdateNotification, object: nil)
+        
+        orderTabBarItem = (window?.rootViewController as? UITabBarController)?.viewControllers?[1].tabBarItem
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

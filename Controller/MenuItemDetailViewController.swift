@@ -29,7 +29,7 @@ class MenuItemDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(menuItem.name)
+        print("hello")
         // Do any additional setup after loading the view.
         addToOrderButton.layer.cornerRadius = 5.0
         updateUI()
@@ -50,6 +50,9 @@ class MenuItemDetailViewController: UIViewController {
             self.addToOrderButton.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             
         }, completion: nil)
+        
+        MenuController.shared.order.menuItems.append(menuItem)
+        print(menuItem)
     }
     
 
