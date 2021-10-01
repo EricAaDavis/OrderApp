@@ -10,7 +10,6 @@ import UIKit
 class MenuTableViewController: UITableViewController {
     
     let category: String
-    let menuController = MenuController()
     var menuItems = [MenuItem]()
     
     init?(coder: NSCoder, category: String) {
@@ -25,7 +24,7 @@ class MenuTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        menuController.fetchMenuItems(forCategory: category) { (result) in
+        MenuController.shared.fetchMenuItems(forCategory: category) { (result) in
             switch result {
             case .success(let menuItems):
                 self.updateUI(with: menuItems)
@@ -84,18 +83,11 @@ class MenuTableViewController: UITableViewController {
         return cell
     }
     
-    let priceFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "NOK"
-        
-        return formatter
-    }()
     
     func configureCell(_ cell: UITableViewCell, forItemAt indexPath: IndexPath) {
         let menuItem = menuItems[indexPath.row]
         cell.textLabel?.text = menuItem.name
-        cell.detailTextLabel?.text = priceFormatter.string(from: NSNumber(value: menuItem.price))
+        cell.detailTextLabel?.text = MenuItem.priceFormatter.string(from: NSNumber(value: menuItem.price))
     }
 
     /*

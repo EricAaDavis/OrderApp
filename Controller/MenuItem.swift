@@ -24,6 +24,14 @@ struct MenuItem: Codable {
         case image_url
     }
     
+    static let priceFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencySymbol = "NOK"
+        
+        return formatter
+    }()
+    
 }
 
 /*

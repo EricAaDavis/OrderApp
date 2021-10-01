@@ -8,6 +8,9 @@
 import Foundation
 
 class MenuController {
+    
+    static let shared = MenuController()
+    
     let baseURL = URL(string: "http://localhost:8080/")!
     
     //Get request for the categories
@@ -40,6 +43,7 @@ class MenuController {
     //Get request for the items within a category
     func fetchMenuItems(forCategory categoryName: String,
                         completion: @escaping (Result<[MenuItem], Error>) -> Void) {
+        
         
         let fetchMenuItemsString = "\(baseURL)menu?category=\(categoryName)"
         let fetchMenuItemsURL = URL(string: fetchMenuItemsString)!
@@ -104,4 +108,6 @@ class MenuController {
         }
         task.resume()
     }
+    
+    
 }
