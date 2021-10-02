@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class MenuController {
     
@@ -63,19 +64,13 @@ class MenuController {
             if let data = data {
                 print(data)
                 do {
-                    print("we got data")
                     let jsonDecoder = JSONDecoder()
-                    print("we got data 2")
                     let menuResponse = try jsonDecoder.decode(MenuResponse.self, from: data)
-                    print("we got data 3")
                     completion(.success(menuResponse.items))
-                    print("we got data 4")
                 } catch {
-                    print("error for data not being possible to decode")
                     completion(.failure(error))
                 }
             } else if let error = error {
-                print("the error for not getting any data")
                 completion(.failure(error))
             }
         }
@@ -85,37 +80,82 @@ class MenuController {
     
     //Post containing the user's order when it's time to communicate back to the resturaunt's server
     typealias MinutesToPrepareInt = Int
+    
+    
     func submitOrder(forMenuIDs menuIDs: [Int],
                      completion: @escaping (Result<MinutesToPrepareInt, Error>) -> Void) {
-        let orderURL = baseURL.appendingPathComponent("order")
-        
+        let orderStringURL = "\(baseURL)order"
+        let orderURL = URL(string: orderStringURL)!
+
         //modify the request default from type get to post
         var request = URLRequest(url: orderURL)
         request.httpMethod = "POST"
         //tell the server that the request is sending json data
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let data = ["menuIds": menuIDs]
         let jsonEncoder = JSONEncoder()
         let jsonData = try? jsonEncoder.encode(data)
         request.httpBody = jsonData
-        
+        print(data)
+        print("this is the json data \(jsonData!)")
+        print(request)
+
         let task = URLSession.shared.dataTask(with: request) {
         (data, response, error) in
             if let data = data {
                 do {
                     let jsonDecoder = JSONDecoder()
+                    print("step 1 worked")
                     let orderResponse = try jsonDecoder.decode(OrderResponse.self, from: data)
-                    completion(.success(orderResponse.prepTime))
+                    print("Step 2 worked")
+                    completion(.success(orderResponse.preperation_time))
+                    print("Step 3 Worked")
                 } catch {
+                    print("we are unable to decode")
                     completion(.failure(error))
                 }
             } else if let error = error {
+                print("Something is wrong with the json post url")
                 completion(.failure(error))
             }
         }
         task.resume()
     }
     
+    func fetchImage(url: URL, completion: @escaping (UIImage?) -> Void) {
+        let task = URLSession.shared.dataTask(with: url) {
+            (data, response, error) in
+            if let data = data,
+               let image = UIImage(data: data) {
+                print("This is the \(image)")
+                completion(image)
+            } else {
+                completion(nil)
+            }
+        }
+        task.resume()
+    }
+
+//    func submitOrder(forMenuIDs menuIDs: [Int], completion:
+//       @escaping (Result<MinutesToPrepare, Error>) -> Void) {
+//        let orderURL = baseURL.appendingPathComponent("order")
+//        var request = URLRequest(url: orderURL)
+//        request.httpMethod = "POST"
+//        request.setValue("application/json",
+//           forHTTPHeaderField: "Content-Type")
+//
+//        let data = ["menuIds": menuIDs]
+//        let jsonEncoder = JSONEncoder()
+//        let jsonData = try? jsonEncoder.encode(data)
+//        request.httpBody = jsonData
+//
+//        let task = URLSession.shared.dataTask(with: request)
+//           { (data, response, error) in
+//
+//        }
+//        task.resume()
+//    }
+
     
 }

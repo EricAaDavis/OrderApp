@@ -29,7 +29,6 @@ class MenuItemDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("hello")
         // Do any additional setup after loading the view.
         addToOrderButton.layer.cornerRadius = 5.0
         updateUI()
@@ -39,6 +38,14 @@ class MenuItemDetailViewController: UIViewController {
         nameLabel.text = menuItem.name
         priceLabel.text = MenuItem.priceFormatter.string(from: NSNumber(value: menuItem.price))
         detailedTextLabel.text = menuItem.description
+        MenuController.shared.fetchImage(url: menuItem.image_url) {
+            ( image ) in
+            guard let image = image else { return }
+            DispatchQueue.main.async {
+                self.imageView.image = image
+            }
+
+        }
     }
     
     
