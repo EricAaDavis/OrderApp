@@ -17,12 +17,13 @@ struct CategoriesResponse: Codable {
 }
 
 
+
 struct OrderResponse: Codable {
-    let preperation_time: Int
+    let prepTime: Int
     
-//    enum CodingKeys: String, CodingKey {
-//        case preperation_time
-//    }
+    enum CodingKeys: String, CodingKey {
+        case prepTime = "preparation_time"
+    }
 }
 
 

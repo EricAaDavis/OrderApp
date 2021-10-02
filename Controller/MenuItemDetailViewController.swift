@@ -34,6 +34,11 @@ class MenuItemDetailViewController: UIViewController {
         updateUI()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MenuController.shared.updateUserActivity(with: .menuItemDetail(menuItem))
+    }
+    
     func updateUI() {
         nameLabel.text = menuItem.name
         priceLabel.text = MenuItem.priceFormatter.string(from: NSNumber(value: menuItem.price))
@@ -44,7 +49,7 @@ class MenuItemDetailViewController: UIViewController {
             DispatchQueue.main.async {
                 self.imageView.image = image
             }
-
+            
         }
     }
     
@@ -59,18 +64,18 @@ class MenuItemDetailViewController: UIViewController {
         }, completion: nil)
         
         MenuController.shared.order.menuItems.append(menuItem)
-        print(menuItem)
+        
     }
     
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

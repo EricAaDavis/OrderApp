@@ -8,6 +8,7 @@
 import Foundation
 
 struct MenuItem: Codable {
+    
     var id: Int
     var name: String
     var description: String
@@ -33,24 +34,3 @@ struct MenuItem: Codable {
     }()
     
 }
-
-/*
-struct MenuItem: Codable {
-    var id: Int
-    var name: String
-    var description: String
-    var price: Double
-    var category: String
-    var image_url: URL
-    
-    enum codingKeys: String, CodingKey {
-        case id
-        case name
-        case description
-        case price
-        case category
-        case image_url
-    }
-    
-}
-*/

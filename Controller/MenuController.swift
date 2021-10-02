@@ -10,13 +10,16 @@ import UIKit
 
 class MenuController {
     
+    var userActivity = NSUserActivity(activityType: "com.example.OrderApp.order")
+    
     static let shared = MenuController()
     
-    static let orderUpdateNotification = Notification.Name("MenuController.orderUpdated")
+    static let orderUpdatedNotification = Notification.Name("MenuController.orderUpdated")
     
     var order = Order() {
         didSet {
-            NotificationCenter.default.post(name: MenuController.orderUpdateNotification, object: nil)
+            NotificationCenter.default.post(name: MenuController.orderUpdatedNotification, object: nil)
+            userActivity.order = order
         }
     }
     
@@ -36,11 +39,11 @@ class MenuController {
                     let categoriesResponse = try jsonDecoder.decode(CategoriesResponse.self, from: data)
                     completion(.success(categoriesResponse.categories))
                 } catch {
-//                    print("it is this at which is running")
+                    //                    print("it is this at which is running")
                     completion(.failure(error))
                 }
             } else if let error = error {
-    
+                
                 completion(.failure(error))
             }
             
@@ -56,8 +59,8 @@ class MenuController {
         
         let fetchMenuItemsString = "\(baseURL)menu?category=\(categoryName)"
         let fetchMenuItemsURL = URL(string: fetchMenuItemsString)!
-//        var components = URLComponents(url: fetchMenyItemsURL, resolvingAgainstBaseURL: true)!
-//        components.queryItems = [URLQueryItem(name: "category", value: categoryName)]
+        //        var components = URLComponents(url: fetchMenyItemsURL, resolvingAgainstBaseURL: true)!
+        //        components.queryItems = [URLQueryItem(name: "category", value: categoryName)]
         print(fetchMenuItemsURL)
         let task = URLSession.shared.dataTask(with: fetchMenuItemsURL) {
             (data, response, error) in
@@ -81,42 +84,28 @@ class MenuController {
     //Post containing the user's order when it's time to communicate back to the resturaunt's server
     typealias MinutesToPrepareInt = Int
     
-    
-    func submitOrder(forMenuIDs menuIDs: [Int],
-                     completion: @escaping (Result<MinutesToPrepareInt, Error>) -> Void) {
-        let orderStringURL = "\(baseURL)order"
-        let orderURL = URL(string: orderStringURL)!
-
-        //modify the request default from type get to post
+    func submitOrder(forMenuIDs menuIDs: [Int], completion: @escaping (Result<MinutesToPrepareInt, Error>) -> Void) {
+        let orderURL = baseURL.appendingPathComponent("order")
         var request = URLRequest(url: orderURL)
-        request.httpMethod = "POST"
-        //tell the server that the request is sending json data
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
         let data = ["menuIds": menuIDs]
         let jsonEncoder = JSONEncoder()
         let jsonData = try? jsonEncoder.encode(data)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
-        print(data)
-        print("this is the json data \(jsonData!)")
-        print(request)
-
-        let task = URLSession.shared.dataTask(with: request) {
-        (data, response, error) in
+        print(orderURL)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
+                    
                     let jsonDecoder = JSONDecoder()
-                    print("step 1 worked")
                     let orderResponse = try jsonDecoder.decode(OrderResponse.self, from: data)
-                    print("Step 2 worked")
-                    completion(.success(orderResponse.preperation_time))
-                    print("Step 3 Worked")
+                    completion(.success(orderResponse.prepTime))
                 } catch {
-                    print("we are unable to decode")
+                    print("unable to decode")
                     completion(.failure(error))
                 }
             } else if let error = error {
-                print("Something is wrong with the json post url")
                 completion(.failure(error))
             }
         }
@@ -136,26 +125,20 @@ class MenuController {
         }
         task.resume()
     }
-
-//    func submitOrder(forMenuIDs menuIDs: [Int], completion:
-//       @escaping (Result<MinutesToPrepare, Error>) -> Void) {
-//        let orderURL = baseURL.appendingPathComponent("order")
-//        var request = URLRequest(url: orderURL)
-//        request.httpMethod = "POST"
-//        request.setValue("application/json",
-//           forHTTPHeaderField: "Content-Type")
-//
-//        let data = ["menuIds": menuIDs]
-//        let jsonEncoder = JSONEncoder()
-//        let jsonData = try? jsonEncoder.encode(data)
-//        request.httpBody = jsonData
-//
-//        let task = URLSession.shared.dataTask(with: request)
-//           { (data, response, error) in
-//
-//        }
-//        task.resume()
-//    }
-
+    
+    
+    
+    func updateUserActivity(with controller: StateRestorationController) {
+        switch controller {
+        case .categories, .order:
+            break
+        case .menu(let category):
+            userActivity.menuCategory = category
+        case .menuItemDetail(let menuItem):
+            userActivity.menuItem = menuItem
+        }
+        userActivity.controllerIdentifier =  controller.identifier
+        
+    }
     
 }
